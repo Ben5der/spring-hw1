@@ -1,7 +1,10 @@
-package ru.otus.spring.hw1.service
+package ru.otus.spring.hw1.service.impl
 
 import org.springframework.stereotype.Service
 import ru.otus.spring.hw1.dao.QuestionDao
+import ru.otus.spring.hw1.service.QuestionAskingService
+import ru.otus.spring.hw1.service.TestResultService
+import ru.otus.spring.hw1.service.TestingService
 
 @Service
 class TestingServiceImpl(

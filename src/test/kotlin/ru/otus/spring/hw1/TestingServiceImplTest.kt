@@ -7,7 +7,7 @@ import ru.otus.spring.hw1.model.AnswerOption
 import ru.otus.spring.hw1.model.Question
 import ru.otus.spring.hw1.service.QuestionAskingService
 import ru.otus.spring.hw1.service.TestResultService
-import ru.otus.spring.hw1.service.TestingServiceImpl
+import ru.otus.spring.hw1.service.impl.TestingServiceImpl
 
 
 class TestingServiceImplTest {
