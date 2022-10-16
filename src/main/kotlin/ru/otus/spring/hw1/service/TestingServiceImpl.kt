@@ -1,22 +1,21 @@
 package ru.otus.spring.hw1.service
 
+import org.springframework.stereotype.Service
 import ru.otus.spring.hw1.dao.QuestionDao
-import ru.otus.spring.hw1.model.Question
 
+@Service
 class TestingServiceImpl(
     private val questionDao: QuestionDao,
-    private val ioService: IOService
+    private val questionAskingService: QuestionAskingService,
+    private val testResultService: TestResultService
 ) : TestingService {
     override fun startTesting() {
-        val testQuestionList = questionDao.getQuestions()
-        testQuestionList.printTest()
+        val questions = questionDao.getQuestions()
+        val questionsCount = questions.size
+        val rightAnswerCount = questions
+            .map { questionAskingService.askQuestionAndReturnResult(it) }
+            .filter { it }
+            .size
+        testResultService.calculateAndPrintTestResults(rightAnswerCount, questionsCount)
     }
-
-    private fun List<Question>.printTest() =
-        this.forEach { question ->
-            ioService.println("Question ${question.number}: ${question.question}")
-            question.answerOptions.forEach { answerOption ->
-                ioService.println("Answer ${answerOption.number + 1}: ${answerOption.answer}")
-            }
-        }
 }
