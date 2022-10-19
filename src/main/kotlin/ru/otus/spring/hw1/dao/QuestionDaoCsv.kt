@@ -22,6 +22,7 @@ class QuestionDaoCsv(
             .withType(QuestionCsvModel::class.java)
             .build()
             .parse()
+        csvFileIS.close()
         return questionCsvModelLists.toTestAnswerList()
     }
 
@@ -29,14 +30,12 @@ class QuestionDaoCsv(
         this
             .groupBy { it.questionId }
             .map {
-                val firstQuestionModel = it.value.first()
                 val answerOptions =
                     it.value.mapIndexed { answerNumber, testCsvModel -> testCsvModel.toAnswerOption(answerNumber + 1) }
                 answerOptions.firstOrNull { answer -> answer.isCorrect }
                     ?: throw QuestionDaoCsvNotFoundRightAnswerException("Не задан правильный ответ для вопроса ")
                 Question(
-                    number = it.key!!,
-                    question = firstQuestionModel.question!!,
+                    question = it.value.first().question!!,
                     answerOptions = answerOptions
                 )
             }

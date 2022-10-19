@@ -1,7 +1,9 @@
-package ru.otus.spring.hw1.service
+package ru.otus.spring.hw1.service.impl
 
 import org.springframework.stereotype.Service
 import ru.otus.spring.hw1.model.Question
+import ru.otus.spring.hw1.service.IOService
+import ru.otus.spring.hw1.service.QuestionAskingService
 
 @Service
 class QuestionAskingServiceImpl(private val ioService: IOService) : QuestionAskingService {
@@ -10,7 +12,7 @@ class QuestionAskingServiceImpl(private val ioService: IOService) : QuestionAski
         while (true) {
             try {
                 question.printQuestion()
-                val userAnswerNumber = ioService.read().toInt()
+                val userAnswerNumber = ioService.readln().toInt()
                 if (userAnswerNumber < 1 || userAnswerNumber > answerOptionCount) {
                     ioService.println("$ENTERED_ANSWER_OUT_OF_RANGE_MESSAGE from 1 to $answerOptionCount")
                     continue
@@ -23,7 +25,7 @@ class QuestionAskingServiceImpl(private val ioService: IOService) : QuestionAski
     }
 
     private fun Question.printQuestion() {
-        ioService.println("Question ${this.number}: ${this.question}")
+        ioService.println(this.question)
         this.answerOptions.forEach {
             ioService.println("${it.number}: ${it.answer}")
         }

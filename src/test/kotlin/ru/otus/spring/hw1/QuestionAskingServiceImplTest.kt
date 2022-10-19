@@ -8,7 +8,7 @@ import org.mockito.kotlin.whenever
 import ru.otus.spring.hw1.model.AnswerOption
 import ru.otus.spring.hw1.model.Question
 import ru.otus.spring.hw1.service.IOService
-import ru.otus.spring.hw1.service.QuestionAskingServiceImpl
+import ru.otus.spring.hw1.service.impl.QuestionAskingServiceImpl
 import kotlin.test.assertFalse
 
 class QuestionAskingServiceImplTest {
@@ -18,7 +18,6 @@ class QuestionAskingServiceImplTest {
     private val questionAskingService = QuestionAskingServiceImpl(ioService)
 
     private val question = Question(
-        1,
         "123",
         answerOptions = listOf(
             AnswerOption(1, "1", true),
@@ -29,7 +28,7 @@ class QuestionAskingServiceImplTest {
     @Test
     fun `user entered not a number`() {
         val enterValue = "bad value"
-        whenever(ioService.read()).thenReturn(enterValue).thenReturn("1")
+        whenever(ioService.readln()).thenReturn(enterValue).thenReturn("1")
         questionAskingService.askQuestionAndReturnResult(question)
         verify(ioService).println(QuestionAskingServiceImpl.WRONG_ANSWER_FORMAT_MESSAGE)
     }
@@ -37,21 +36,21 @@ class QuestionAskingServiceImplTest {
     @Test
     fun `user entered out of range number`() {
         val enterValue = "5"
-        whenever(ioService.read()).thenReturn(enterValue).thenReturn("1")
+        whenever(ioService.readln()).thenReturn(enterValue).thenReturn("1")
         questionAskingService.askQuestionAndReturnResult(question)
         verify(ioService).println(matches(QuestionAskingServiceImpl.ENTERED_ANSWER_OUT_OF_RANGE_MESSAGE))
     }
 
     @Test
     fun `user entered right answer`() {
-        whenever(ioService.read()).thenReturn("1")
+        whenever(ioService.readln()).thenReturn("1")
         val result = questionAskingService.askQuestionAndReturnResult(question)
         assert(result)
     }
 
     @Test
     fun `user entered wrong answer`() {
-        whenever(ioService.read()).thenReturn("2")
+        whenever(ioService.readln()).thenReturn("2")
         val result = questionAskingService.askQuestionAndReturnResult(question)
         assertFalse(result)
     }
