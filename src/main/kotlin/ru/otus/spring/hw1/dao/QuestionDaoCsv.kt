@@ -2,14 +2,19 @@ package ru.otus.spring.hw1.dao
 
 import com.opencsv.bean.CsvBindByName
 import com.opencsv.bean.CsvToBeanBuilder
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 import ru.otus.spring.hw1.exception.QuestionDaoCsvNotFoundRightAnswerException
 import ru.otus.spring.hw1.model.AnswerOption
 import ru.otus.spring.hw1.model.Question
 import java.io.FileNotFoundException
 import java.io.InputStreamReader
 
-
-class QuestionDaoCsv(private val path: String) : QuestionDao {
+@Component
+class QuestionDaoCsv(
+    @Value("\${test.questions.csv.path}")
+    private val path: String
+) : QuestionDao {
     override fun getQuestions(): List<Question> {
         val csvFileIS = this::class.java.classLoader.getResourceAsStream(path)
             ?: throw FileNotFoundException("Файл $path не найден")
@@ -17,6 +22,7 @@ class QuestionDaoCsv(private val path: String) : QuestionDao {
             .withType(QuestionCsvModel::class.java)
             .build()
             .parse()
+        csvFileIS.close()
         return questionCsvModelLists.toTestAnswerList()
     }
 
@@ -24,14 +30,12 @@ class QuestionDaoCsv(private val path: String) : QuestionDao {
         this
             .groupBy { it.questionId }
             .map {
-                val firstQuestionModel = it.value.first()
                 val answerOptions =
-                    it.value.mapIndexed { answerNumber, testCsvModel -> testCsvModel.toAnswerOption(answerNumber) }
+                    it.value.mapIndexed { answerNumber, testCsvModel -> testCsvModel.toAnswerOption(answerNumber + 1) }
                 answerOptions.firstOrNull { answer -> answer.isCorrect }
                     ?: throw QuestionDaoCsvNotFoundRightAnswerException("Не задан правильный ответ для вопроса ")
                 Question(
-                    number = it.key!!,
-                    question = firstQuestionModel.question!!,
+                    question = it.value.first().question!!,
                     answerOptions = answerOptions
                 )
             }
